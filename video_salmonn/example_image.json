@@ -1,10 +1,12 @@
 [
     {
-        "image_name": "./dummy/1272-128104-0000.flac",
+        "image_name": [
+            "./dummy/761183272.jpg"
+        ],
         "conversation": [
             {
                 "from": "human",
-                "value": "Describe the audio"
+                "value": "Describe the image in detail"
             },
             {
                 "from": "gpt",

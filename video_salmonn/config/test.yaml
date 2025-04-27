@@ -5,8 +5,8 @@ orig_delta_path: ""
 delta_ckpt_path: ./ckpt/MultiResQFormer/pytorch_model_4_5001.pt
 
 all_decode_info: [
-  # ["audioimage", "audiovisual_input", "example.json"]
-  ["audio", "audio_input", "example_audio.json"]
+  ["audioimage", "image_input", "example_image.json"]
+  # ["audio", "audio_input", "example_audio.json"]
   # ["audiovideoimage", "audiovideo_input", "example_video.json"]
 ]
 
