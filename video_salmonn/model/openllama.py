@@ -245,7 +245,7 @@ class OpenLLAMAPEFTModel(nn.Module):
 
         if self.use_whisper:
             print("Loading Whisper Model")
-            whispermodel = "openai/whisper-large-v2"
+            whispermodel = "./ckpt/pretrained_ckpt/whisper-large-v2"
             self.whispertransform = WhisperFeatureExtractor.from_pretrained(whispermodel, cache_dir=self.cache_dir)
             self.speech_encoder = WhisperModel.from_pretrained(whispermodel, cache_dir=self.cache_dir).encoder
             for name, param in self.speech_encoder.named_parameters():
