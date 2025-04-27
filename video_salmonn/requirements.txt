@@ -1,6 +1,6 @@
-torch==2.0.0+cu118
-torchaudio==2.0.1+cu118
-torchvision==0.15.1+cu118
+# torch==2.0.0+cu118
+# torchaudio==2.0.1+cu118
+# torchvision==0.15.1+cu118
 pytorchvideo==0.1.5
 tqdm==4.66.1
 pyyaml==6.0.1
