@@ -161,8 +161,10 @@ cython_debug/
 
 **/.DS_Store
 launch.sh
-
+*.pt
+*.pth
 *.pyc
 /output
 arnold.sh
 /configs_local
+video_salmonn/ckpt/vicuna-13b-v1.5
