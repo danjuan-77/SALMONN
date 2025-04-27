@@ -168,3 +168,4 @@ launch.sh
 arnold.sh
 /configs_local
 video_salmonn/ckpt/vicuna-13b-v1.5
+*.yaml

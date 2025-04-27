@@ -1,0 +1,18 @@
+[
+    {
+        "id": "./dummy/4405327307.mp4_Describe the video together with the audio in detail",
+        "conversation": [
+            {
+                "from": "human",
+                "value": "Describe the video together with the audio in detail"
+            },
+            {
+                "from": "gpt",
+                "value": "None"
+            }
+        ],
+        "task": "audiovideo_input",
+        "ref_answer": "None",
+        "gen_answer": "The video shows a group of musicians performing on stage, with a man playing the piano and singing into a microphone. There are also other musicians playing saxophone, trumpet, and guitar. The audience is clapping and dancing along to the music.</s>"
+    }
+]
