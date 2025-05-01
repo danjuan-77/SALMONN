@@ -432,14 +432,15 @@ for modality, task, task_path in all_decode_info:
             
     
         conv = build_conversation(text)
-        
-        new_data.append({
+        new_item = {
             "id":           _id,
             "task":         _task,
             "subtask":      _subtask,
             "image_name":   media,
             "conversation": conv
-        })
+        }
+        print(">>> data=:", new_item)
+        new_data.append(new_item)
     
     
     
