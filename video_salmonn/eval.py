@@ -22,7 +22,9 @@ from moviepy.editor import (
     AudioFileClip,
     concatenate_audioclips,
     ImageClip,
+    AudioClip,
     concatenate_videoclips,
+    VideoFileClip
 )
 maic_cls_list = ['bus', 'hair-dryer', 'pipa', 'man', 'ambulance', 'razor', 'harp', 'tabla', 'bass', 'handpan', 
         'girl', 'sitar', 'car', 'lion', 'guitar', 'vacuum-cleaner', 'cat', 'mower', 'helicopter', 'boy', 'drum', 
@@ -261,6 +263,46 @@ def images_and_audio_to_video(image_paths: List[str], audio_paths: List[str], fp
     final.write_videofile(out_path, fps=fps, codec="libx264", logger=None)
     return out_path 
 
+def extract_audio_from_video(video_path: str) -> str:
+    """Extract audio track from a video file and write it to a temp WAV."""
+    clip = VideoFileClip(video_path)
+    tmp = tempfile.NamedTemporaryFile(suffix=".wav", delete=False)
+    out_path = tmp.name
+    clip.audio.write_audiofile(out_path, fps=16000, logger=None)
+    clip.reader.close(); clip.audio.reader.close_proc()
+    return out_path
+
+def generate_silent_wav(video_path: str, fps: int = 16000) -> str:
+    """
+    Generate a silent WAV file matching the duration of the input video.
+    Returns the path to the temporary WAV file.
+    """
+    # 1. 读取视频以获取时长
+    clip = VideoFileClip(video_path)
+    duration = clip.duration
+
+    # 2. 创建一个每一时刻都返回 0.0（静音）的 AudioClip
+    silent = AudioClip(lambda t: 0.0, duration=duration, fps=fps)
+
+    # 3. 写出到临时文件
+    tmp = tempfile.NamedTemporaryFile(suffix=".wav", delete=False)
+    out_wav = tmp.name
+    silent.write_audiofile(out_wav, fps=fps, logger=None)
+
+    # 4. 关闭视频文件避免资源泄露
+    clip.reader.close()
+    return out_wav
+
+def build_conversation(text: str) -> list:
+    """
+    Return a standard conversation list given the user's question text.
+    """
+    return [
+        {"from": "human", "value": text},
+        {"from": "gpt",   "value": "None"}
+    ]
+    
+
 # Set device
 device = "cuda" if torch.cuda.is_available() else "cpu"
 
@@ -290,7 +332,7 @@ dataloader_lst = []
 for modality, task, task_path in all_decode_info:
     print("Loading data from: {}".format(task_path))
     task_name = f"L{task_path.rsplit('/', 1)[0][-1]}_{task_path.rsplit('/', 1)[-1]}"
-    model_name = "ola"
+    model_name = "video_salmonn"
     save_prediction_json = f'/share/nlp/tuwenming/projects/HAVIB/eval/user_outputs/{model_name}/tasks/{task_name}.json'
     os.makedirs(os.path.dirname(save_prediction_json), exist_ok=True)
     print('>>> save res to:', save_prediction_json)
@@ -315,7 +357,8 @@ for modality, task, task_path in all_decode_info:
         parsed_data.append(entry)
 
     print(">>>Finished parse raw data...")    
-
+    dummy_audio = "./dummy/1272-128104-0000.flac"
+    new_data = []
     for data in tqdm(parsed_data):
         _id = data['id']
         _task = data['task']
@@ -337,11 +380,7 @@ for modality, task, task_path in all_decode_info:
 
         if audio_list and not image_list and not video:
             # Case 1: 仅音频, "image_name": "音频地址",
-            
-            if len(audio_list) > 1:
-                audio_path = concat_audio(audio_list)
-            else:
-                audio_path = audio_list[0]
+            media = concat_audio(audio_list) if len(audio_list)>1 else audio_list[0]
             
                 
         elif image_list and not audio_list and not video:
@@ -352,7 +391,7 @@ for modality, task, task_path in all_decode_info:
             "./dummy/1272-128104-0000.flac" # dummy audio
         ]
             """
-            image_path = image_list[0]
+            media = [image_list[0], dummy_audio]
             
 
         elif video and not audio_list and not image_list:
@@ -363,7 +402,8 @@ for modality, task, task_path in all_decode_info:
             "./dummy/4405327307.wav" # 生成一个无声音频与视频对齐
         ]
             """ 
-            video_path = video
+            silent_wav = generate_silent_wav(video)
+            media = [video, silent_wav]
             
 
         elif video and audio_list:
@@ -374,13 +414,13 @@ for modality, task, task_path in all_decode_info:
             "./dummy/4405327307.wav" 视频的音频
         ]
             """ 
-            audio_path = audio_list[0]
-            video_path = video
+            media = [video, audio_list[0]]
             
 
         elif image_list and audio_list and not video:
             # Case 5: 图像+音频 -> 合成视频
-            video_path = images_and_audio_to_video(image_list, audio_list, fps=1)
+            vid = images_and_audio_to_video(image_list, audio_list, fps=1)
+            media = [vid, audio_list[0]]
             """
             "image_name": [
             "./dummy/4405327307.mp4",
@@ -392,11 +432,23 @@ for modality, task, task_path in all_decode_info:
             raise ValueError(f"Unsupported input combination for id={_id}")
             
     
+        conv = build_conversation(text)
+        
+        new_data.append({
+            "id":           _id,
+            "task":         _task,
+            "subtask":      _subtask,
+            "image_name":   media,
+            "conversation": conv
+        })
     
     
     
-    
-    data_path = ""
+    data_path = os.path.join(task_path, "salmonn_data.json")
+    with open(data_path, 'w', encoding='utf-8') as fout:
+        json.dump(new_data, fout, ensure_ascii=False, indent=2)
+        
+        
     if modality == "audio":
         dataset = SupervisedAudioVisualDataset4Test(
             'audio',
@@ -439,29 +491,27 @@ for modality, task, task_path in all_decode_info:
         drop_last=False
     )
    
-    dataloader_lst.append([dataloader, task])
-
-# Start inference
-results = []
-pbar = tqdm(total=sum([len(dataloader) for dataloader, _ in dataloader_lst]), desc="Decoding", position=0)
-
-for dataloader, task in dataloader_lst:
-    for batch_i, batch in enumerate(dataloader):
+    # 3) 推理并收集 pred_records
+    preds = []
+    for batch in tqdm(dataloader, desc=f"Decoding {task_name}"):
         with torch.no_grad():
-            text = ds_engine(batch, generate=True)
-            print(text)
-            for gen, ref, id in zip(text, batch['output_texts'], batch['orig_paths']):
-                results.append(
-                    {
-                        "id": f"{str(id)}_{ref[0]['value']}",
-                        "conversation": ref,
-                        "task": task,
-                        "ref_answer": ref[1]['value'],
-                        "gen_answer": gen
-                    }
-                )
-            pbar.update(1)
+            # `generate` 返回一个列表，对应当前 batch 中每个样本的预测
+            outputs = ds_engine(batch, generate=True)
+        preds.extend(outputs)
 
-# Write the results out
-with open(os.path.join(decode_root, f"eval_result.json"), "w", encoding='utf-8') as f:
-    json.dump(results, f, indent=4, ensure_ascii=False)
+    # 4) 结合 new_data 中的 id/task/subtask 构造 pred_records
+    pred_records = [
+        {
+            "id":       entry["id"],
+            "task":     entry["task"],
+            "subtask":  entry.get("subtask"),
+            "predict":  pred
+        }
+        for entry, pred in zip(new_data, preds)
+    ]
+
+    # 5) 写入当前数据集的预测结果 JSON
+    with open(save_prediction_json, "w", encoding="utf-8") as fout:
+        json.dump(pred_records, fout, ensure_ascii=False, indent=2)
+
+    print(f">>> Wrote {len(pred_records)} records to {save_prediction_json}")
