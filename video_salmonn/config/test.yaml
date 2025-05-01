@@ -21,20 +21,20 @@ all_decode_info: [
     # ["audioimage",      "L2_MVIC", "/share/nlp/tuwenming/projects/HAVIB/data/levels/level_2/MVIC"],
 
     # # Level 3
-    ["audiovideoimage", "L3_AVH",  "/share/nlp/tuwenming/projects/HAVIB/data/levels/level_3/AVH"],
-    # ["audioimage",      "L3_AVL",  "/share/nlp/tuwenming/projects/HAVIB/data/levels/level_3/AVL"],
+    # ["audiovideoimage", "L3_AVH",  "/share/nlp/tuwenming/projects/HAVIB/data/levels/level_3/AVH"],
+    ["audiovideoimage",      "L3_AVL",  "/share/nlp/tuwenming/projects/HAVIB/data/levels/level_3/AVL"],
     # ["audiovideoimage", "L3_AVM",  "/share/nlp/tuwenming/projects/HAVIB/data/levels/level_3/AVM"],
-    # ["audioimage",      "L3_AVR",  "/share/nlp/tuwenming/projects/HAVIB/data/levels/level_3/AVR"],
+    # ["audiovideoimage",      "L3_AVR",  "/share/nlp/tuwenming/projects/HAVIB/data/levels/level_3/AVR"],
     # ["audiovideoimage", "L3_VAH",  "/share/nlp/tuwenming/projects/HAVIB/data/levels/level_3/VAH"],
-    # ["audioimage",      "L3_VAR",  "/share/nlp/tuwenming/projects/HAVIB/data/levels/level_3/VAR"],
+    # ["audiovideoimage",      "L3_VAR",  "/share/nlp/tuwenming/projects/HAVIB/data/levels/level_3/VAR"],
 
     # # Level 4
     # ["audiovideoimage", "L4_AVC",  "/share/nlp/tuwenming/projects/HAVIB/data/levels/level_4/AVC"],
-    # ["audioimage",      "L4_AVLG", "/share/nlp/tuwenming/projects/HAVIB/data/levels/level_4/AVLG"],
+    # ["audiovideoimage",      "L4_AVLG", "/share/nlp/tuwenming/projects/HAVIB/data/levels/level_4/AVLG"],
     # ["audiovideoimage", "L4_AVQA", "/share/nlp/tuwenming/projects/HAVIB/data/levels/level_4/AVQA"],
 
     # # Level 5
-    # ["audioimage",      "L5_AVLG", "/share/nlp/tuwenming/projects/HAVIB/data/levels/level_5/AVLG"],
+    # ["audiovideoimage",      "L5_AVLG", "/share/nlp/tuwenming/projects/HAVIB/data/levels/level_5/AVLG"],
     # ["audiovideoimage", "L5_AVQA", "/share/nlp/tuwenming/projects/HAVIB/data/levels/level_5/AVQA"],
 ]
 
