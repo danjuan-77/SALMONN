@@ -8,7 +8,7 @@ all_decode_info: [
   # ["audioimage", "image_input", "example_image.json"]
   # ["audio", "audio_input", "example_audio.json"]
   # ["audiovideoimage", "audiovideo_input", "example_video.json"]
-  ["audio", "L1_LAQA","/share/nlp/tuwenming/projects/HAVIB/data/levels/level_1/LAQA/data.json"]
+  ["audio", "L1_LAQA","/share/nlp/tuwenming/projects/HAVIB/data/levels/level_1/LAQA"]
 ]
 
 stage: 2y
