@@ -359,88 +359,87 @@ for modality, task, task_path in all_decode_info:
     print(">>>Finished parse raw data...")    
     dummy_audio = "./dummy/1272-128104-0000.flac"
     new_data = []
-    for data in tqdm(parsed_data):
-        _id = data['id']
-        _task = data['task']
-        _subtask = data['subtask']
-        text = data['text']
-        audio_list = (
-            [get_real_path(task_path, p) for p in data["audio_list"]]
-            if data["audio_list"] else None
-        )
-        image_list = (
-            [get_real_path(task_path, p) for p in data["image_list"]]
-            if data["image_list"] else None
-        )
-        video = (
-            get_real_path(task_path, data['video'])
-            if data['video'] else None
-        )
-        print(f">>> text input=:{text}")
+    # for data in tqdm(parsed_data):
+    #     _id = data['id']
+    #     _task = data['task']
+    #     _subtask = data['subtask']
+    #     text = data['text']
+    #     audio_list = (
+    #         [get_real_path(task_path, p) for p in data["audio_list"]]
+    #         if data["audio_list"] else None
+    #     )
+    #     image_list = (
+    #         [get_real_path(task_path, p) for p in data["image_list"]]
+    #         if data["image_list"] else None
+    #     )
+    #     video = (
+    #         get_real_path(task_path, data['video'])
+    #         if data['video'] else None
+    #     )
 
-        if audio_list and not image_list and not video:
-            # Case 1: 仅音频, "image_name": "音频地址",
-            media = concat_audio(audio_list) if len(audio_list)>1 else audio_list[0]
+    #     if audio_list and not image_list and not video:
+    #         # Case 1: 仅音频, "image_name": "音频地址",
+    #         media = concat_audio(audio_list) if len(audio_list)>1 else audio_list[0]
             
                 
-        elif image_list and not audio_list and not video:
-            # Case 2: 仅图像 
-            """
-                "image_name": [
-            "./dummy/761183272.jpg", # image 地址
-            "./dummy/1272-128104-0000.flac" # dummy audio
-        ]
-            """
-            media = [image_list[0], dummy_audio]
+    #     elif image_list and not audio_list and not video:
+    #         # Case 2: 仅图像 
+    #         """
+    #             "image_name": [
+    #         "./dummy/761183272.jpg", # image 地址
+    #         "./dummy/1272-128104-0000.flac" # dummy audio
+    #     ]
+    #         """
+    #         media = [image_list[0], dummy_audio]
             
 
-        elif video and not audio_list and not image_list:
-            # Case 3: 仅视频
-            """
-            "image_name": [
-            "./dummy/4405327307.mp4",
-            "./dummy/4405327307.wav" # 生成一个无声音频与视频对齐
-        ]
-            """ 
-            silent_wav = generate_silent_wav(video)
-            media = [video, silent_wav]
+    #     elif video and not audio_list and not image_list:
+    #         # Case 3: 仅视频
+    #         """
+    #         "image_name": [
+    #         "./dummy/4405327307.mp4",
+    #         "./dummy/4405327307.wav" # 生成一个无声音频与视频对齐
+    #     ]
+    #         """ 
+    #         silent_wav = generate_silent_wav(video)
+    #         media = [video, silent_wav]
             
 
-        elif video and audio_list:
-            # Case 4: 视频+音频列表（实际上直接使用视频自带音频）
-            """
-            "image_name": [
-            "./dummy/4405327307.mp4",
-            "./dummy/4405327307.wav" 视频的音频
-        ]
-            """ 
-            media = [video, audio_list[0]]
+    #     elif video and audio_list:
+    #         # Case 4: 视频+音频列表（实际上直接使用视频自带音频）
+    #         """
+    #         "image_name": [
+    #         "./dummy/4405327307.mp4",
+    #         "./dummy/4405327307.wav" 视频的音频
+    #     ]
+    #         """ 
+    #         media = [video, audio_list[0]]
             
 
-        elif image_list and audio_list and not video:
-            # Case 5: 图像+音频 -> 合成视频
-            vid = images_and_audio_to_video(image_list, audio_list, fps=1)
-            media = [vid, audio_list[0]]
-            """
-            "image_name": [
-            "./dummy/4405327307.mp4",
-            "./dummy/4405327307.wav" # 需要根据视频获取wav
-        ]
-            """ 
+    #     elif image_list and audio_list and not video:
+    #         # Case 5: 图像+音频 -> 合成视频
+    #         vid = images_and_audio_to_video(image_list, audio_list, fps=1)
+    #         media = [vid, audio_list[0]]
+    #         """
+    #         "image_name": [
+    #         "./dummy/4405327307.mp4",
+    #         "./dummy/4405327307.wav" # 需要根据视频获取wav
+    #     ]
+    #         """ 
 
-        else:
-            raise ValueError(f"Unsupported input combination for id={_id}")
+    #     else:
+    #         raise ValueError(f"Unsupported input combination for id={_id}")
             
     
-        conv = build_conversation(text)
+    #     conv = build_conversation(text)
         
-        new_data.append({
-            "id":           _id,
-            "task":         _task,
-            "subtask":      _subtask,
-            "image_name":   media,
-            "conversation": conv
-        })
+    #     new_data.append({
+    #         "id":           _id,
+    #         "task":         _task,
+    #         "subtask":      _subtask,
+    #         "image_name":   media,
+    #         "conversation": conv
+    #     })
     
     
     
@@ -497,6 +496,7 @@ for modality, task, task_path in all_decode_info:
         with torch.no_grad():
             # `generate` 返回一个列表，对应当前 batch 中每个样本的预测
             outputs = ds_engine(batch, generate=True)
+        print('>>> ans=:', outputs)
         preds.extend(outputs)
 
     # 4) 结合 new_data 中的 id/task/subtask 构造 pred_records
