@@ -13,8 +13,8 @@ all_decode_info: [
 
     # Level 1
     # ["audio",           "L1_LAQA", "/share/nlp/tuwenming/projects/HAVIB/data/levels/level_1/LAQA"],
-    ["audioimage",      "L1_LIQA", "/share/nlp/tuwenming/projects/HAVIB/data/levels/level_1/LIQA"],
-    # ["audiovideoimage", "L1_LVQA", "/share/nlp/tuwenming/projects/HAVIB/data/levels/level_1/LVQA"],
+    # ["audioimage",      "L1_LIQA", "/share/nlp/tuwenming/projects/HAVIB/data/levels/level_1/LIQA"],
+    ["audiovideoimage", "L1_LVQA", "/share/nlp/tuwenming/projects/HAVIB/data/levels/level_1/LVQA"],
 
     # # Level 2
     # ["audio",           "L2_MAIC", "/share/nlp/tuwenming/projects/HAVIB/data/levels/level_2/MAIC"],
