@@ -336,7 +336,8 @@ for modality, task, task_path in all_decode_info:
         print(f">>> text input=:{text}")
 
         if audio_list and not image_list and not video:
-            # Case 1: 仅音频
+            # Case 1: 仅音频, "image_name": "音频地址",
+            
             if len(audio_list) > 1:
                 audio_path = concat_audio(audio_list)
             else:
@@ -344,17 +345,35 @@ for modality, task, task_path in all_decode_info:
             
                 
         elif image_list and not audio_list and not video:
-            # Case 2: 仅图像 -> 无声视频 (时长5s)
+            # Case 2: 仅图像 
+            """
+                "image_name": [
+            "./dummy/761183272.jpg", # image 地址
+            "./dummy/1272-128104-0000.flac" # dummy audio
+        ]
+            """
             image_path = image_list[0]
             
 
         elif video and not audio_list and not image_list:
             # Case 3: 仅视频
+            """
+            "image_name": [
+            "./dummy/4405327307.mp4",
+            "./dummy/4405327307.wav" # 生成一个无声音频与视频对齐
+        ]
+            """ 
             video_path = video
             
 
         elif video and audio_list:
             # Case 4: 视频+音频列表（实际上直接使用视频自带音频）
+            """
+            "image_name": [
+            "./dummy/4405327307.mp4",
+            "./dummy/4405327307.wav" 视频的音频
+        ]
+            """ 
             audio_path = audio_list[0]
             video_path = video
             
@@ -363,8 +382,11 @@ for modality, task, task_path in all_decode_info:
             # Case 5: 图像+音频 -> 合成视频
             video_path = images_and_audio_to_video(image_list, audio_list, fps=1)
             """
-                这里的audio path就是video的内容, 需要使用一个audio
-            """
+            "image_name": [
+            "./dummy/4405327307.mp4",
+            "./dummy/4405327307.wav" # 需要根据视频获取wav
+        ]
+            """ 
 
         else:
             raise ValueError(f"Unsupported input combination for id={_id}")
