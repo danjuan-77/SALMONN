@@ -451,70 +451,70 @@ for modality, task, task_path in all_decode_info:
         json.dump(new_data, fout, ensure_ascii=False, indent=2)
         
         
-    if modality == "audio":
-        dataset = SupervisedAudioVisualDataset4Test(
-            'audio',
-            audio_data_path=data_path,
-            use_whisper=args["use_whisper"],
-            training=False,
-            sin_pos=args["sin_pos"],
-            return_raw=args["return_raw"],
-            cache_dir=args["cache_dir"],
-        )
-    elif modality == "audioimage":
-        dataset = SupervisedAudioVisualDataset4Test(
-            'audioimage',
-            audio_data_path="./dummy/dummy_audio.json",
-            image_data_path=data_path,
-            use_whisper=args["use_whisper"],
-            training=False,
-            sin_pos=args["sin_pos"],
-            return_raw=args["return_raw"],
-            cache_dir=args["cache_dir"],
-        )
-    elif modality == "audiovideoimage":
-        dataset = SupervisedAudioVisualDataset4Test(
-            'audiovideoimage',
-            audio_data_path="./dummy/dummy_audio.json",
-            video_data_path=data_path,
-            use_whisper=args["use_whisper"],
-            training=False,
-            sin_pos=args["sin_pos"],
-            return_raw=args["return_raw"],
-            cache_dir=args["cache_dir"],
-        )
+    # if modality == "audio":
+    #     dataset = SupervisedAudioVisualDataset4Test(
+    #         'audio',
+    #         audio_data_path=data_path,
+    #         use_whisper=args["use_whisper"],
+    #         training=False,
+    #         sin_pos=args["sin_pos"],
+    #         return_raw=args["return_raw"],
+    #         cache_dir=args["cache_dir"],
+    #     )
+    # elif modality == "audioimage":
+    #     dataset = SupervisedAudioVisualDataset4Test(
+    #         'audioimage',
+    #         audio_data_path="./dummy/dummy_audio.json",
+    #         image_data_path=data_path,
+    #         use_whisper=args["use_whisper"],
+    #         training=False,
+    #         sin_pos=args["sin_pos"],
+    #         return_raw=args["return_raw"],
+    #         cache_dir=args["cache_dir"],
+    #     )
+    # elif modality == "audiovideoimage":
+    #     dataset = SupervisedAudioVisualDataset4Test(
+    #         'audiovideoimage',
+    #         audio_data_path="./dummy/dummy_audio.json",
+    #         video_data_path=data_path,
+    #         use_whisper=args["use_whisper"],
+    #         training=False,
+    #         sin_pos=args["sin_pos"],
+    #         return_raw=args["return_raw"],
+    #         cache_dir=args["cache_dir"],
+    #     )
 
-    dataloader = DataLoader(
-        dataset=dataset,
-        batch_size=args['batch_size'],
-        num_workers=3,
-        shuffle=False,
-        collate_fn=dataset.collate,
-        drop_last=False
-    )
+    # dataloader = DataLoader(
+    #     dataset=dataset,
+    #     batch_size=args['batch_size'],
+    #     num_workers=3,
+    #     shuffle=False,
+    #     collate_fn=dataset.collate,
+    #     drop_last=False
+    # )
    
-    # 3) 推理并收集 pred_records
-    preds = []
-    for batch in tqdm(dataloader, desc=f"Decoding {task_name}"):
-        with torch.no_grad():
-            # `generate` 返回一个列表，对应当前 batch 中每个样本的预测
-            outputs = ds_engine(batch, generate=True)
-        print('>>> ans=:', outputs)
-        preds.extend(outputs)
+    # # 3) 推理并收集 pred_records
+    # preds = []
+    # for batch in tqdm(dataloader, desc=f"Decoding {task_name}"):
+    #     with torch.no_grad():
+    #         # `generate` 返回一个列表，对应当前 batch 中每个样本的预测
+    #         outputs = ds_engine(batch, generate=True)
+    #     print('>>> ans=:', outputs)
+    #     preds.extend(outputs)
 
-    # 4) 结合 new_data 中的 id/task/subtask 构造 pred_records
-    pred_records = [
-        {
-            "id":       entry["id"],
-            "task":     entry["task"],
-            "subtask":  entry.get("subtask"),
-            "predict":  pred
-        }
-        for entry, pred in zip(new_data, preds)
-    ]
+    # # 4) 结合 new_data 中的 id/task/subtask 构造 pred_records
+    # pred_records = [
+    #     {
+    #         "id":       entry["id"],
+    #         "task":     entry["task"],
+    #         "subtask":  entry.get("subtask"),
+    #         "predict":  pred
+    #     }
+    #     for entry, pred in zip(new_data, preds)
+    # ]
 
-    # 5) 写入当前数据集的预测结果 JSON
-    with open(save_prediction_json, "w", encoding="utf-8") as fout:
-        json.dump(pred_records, fout, ensure_ascii=False, indent=2)
+    # # 5) 写入当前数据集的预测结果 JSON
+    # with open(save_prediction_json, "w", encoding="utf-8") as fout:
+    #     json.dump(pred_records, fout, ensure_ascii=False, indent=2)
 
-    print(f">>> Wrote {len(pred_records)} records to {save_prediction_json}")
+    # print(f">>> Wrote {len(pred_records)} records to {save_prediction_json}")
