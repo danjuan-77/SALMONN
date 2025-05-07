@@ -30,11 +30,11 @@ all_decode_info: [
 
   # # Level 4
   # ["audiovideoimage", "L4_AVC",  "/share/nlp/tuwenming/projects/HAVIB/data/levels/level_4/AVC"],
-  # ["audiovideoimage",      "L4_AVLG", "/share/nlp/tuwenming/projects/HAVIB/data/levels/level_4/AVLG"],
+  ["audiovideoimage",      "L4_AVLG", "/share/nlp/tuwenming/projects/HAVIB/data/levels/level_4/AVLG"],
   # ["audiovideoimage", "L4_AVQA", "/share/nlp/tuwenming/projects/HAVIB/data/levels/level_4/AVQA"],
 
   # # Level 5
-  # ["audiovideoimage",      "L5_AVLG", "/share/nlp/tuwenming/projects/HAVIB/data/levels/level_5/AVLG"],
+  ["audiovideoimage",      "L5_AVLG", "/share/nlp/tuwenming/projects/HAVIB/data/levels/level_5/AVLG"],
   # ["audiovideoimage", "L5_AVQA", "/share/nlp/tuwenming/projects/HAVIB/data/levels/level_5/AVQA"],
 ]
 
