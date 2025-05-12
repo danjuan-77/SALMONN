@@ -343,8 +343,8 @@ for modality, task, task_path in all_decode_info:
             if not os.path.exists(audio_path): # 去除audio
                 silent_wav = generate_silent_wav(video)
                 media = [video, silent_wav]
-            # elif not os.path.exists(video): # 去除画面 直接使用audio
-            #     media = concat_audio(audio_list) if len(audio_list)>1 else audio_list[0]
+            elif not os.path.exists(video): # 去除画面 直接使用audio
+                media = concat_audio(audio_list) if len(audio_list)>1 else audio_list[0]
             else:
                 media = [video, audio_list[0]]
             
@@ -355,7 +355,7 @@ for modality, task, task_path in all_decode_info:
             if not os.path.exists(audio_path):
                 vid = images_to_video(image_list, len(image_list), fps=1)
                 silent_wav = generate_silent_wav(vid)
-                media = [video, silent_wav]
+                media = [vid, silent_wav]
             else:
                 vid = images_and_audio_to_video(image_list, audio_list, fps=1)
                 media = [vid, audio_list[0]]
